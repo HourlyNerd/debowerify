@@ -138,13 +138,14 @@ module.exports = function (file, options) {
     }});
 
     function replaceNode(node, paths) {
+      //this whole thing is a huge hack!!!ea
       chunks[node.range[0]] = paths.shift();
       for (var i = node.range[0] + 1; i < node.range[1]; i++) {
         chunks[i] = '';
       }
-      chunks[node.range[1] + 1] = paths.map(function (p, i) {
-        return '\nrequire(' + p + ');'
-      })
+      chunks[node.range[1] + 1] = paths.map(function (p) {
+        return '\nrequire(' + p + ') '
+      }) + chunks[node.range[1] + 1]
     }
 
     function getModuleName(path) {
