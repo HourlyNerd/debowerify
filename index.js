@@ -138,14 +138,12 @@ module.exports = function (file, options) {
     }});
 
     function replaceNode(node, paths) {
-      var s = paths.shift()
-      chunks[node.range[0]] = s;
+      chunks[node.range[0]] = paths.shift();
       for (var i = node.range[0] + 1; i < node.range[1]; i++) {
-          chunks[i] = '';
+        chunks[i] = '';
       }
-      paths.forEach(function (p) {
-        var st = '\nrequire(' + p + ')'
-        chunks[node.range[1] + 1] = st
+      chunks[node.range[1] + 1] = paths.map(function (p, i) {
+        return '\nrequire(' + p + ');'
       })
     }
 
@@ -158,7 +156,14 @@ module.exports = function (file, options) {
       if (idx === -1) return null
       return path.substring(idx)
     }
-
-    return chunks.join('');
+    return chunks.reduce(function(a, b) {
+      if(Array.isArray(a)){
+        a = a.join("\n")
+      }
+      if(Array.isArray(b)){
+        b = b.join("\n")
+      }
+      return a + b
+    });
   }
 };
