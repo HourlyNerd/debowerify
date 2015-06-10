@@ -138,14 +138,13 @@ module.exports = function (file, options) {
     }});
 
     function replaceNode(node, paths) {
-      //this whole thing is a huge hack!!!ea
       chunks[node.range[0]] = paths.shift();
       for (var i = node.range[0] + 1; i < node.range[1]; i++) {
         chunks[i] = '';
       }
-      chunks[node.range[1] + 1] = paths.map(function (p) {
-        return '\nrequire(' + p + ') '
-      }) + chunks[node.range[1] + 1]
+      chunks[node.range[1] + 1] = paths.map(function (p, i) {
+        return (i == 0 ? '\n': '')+'require(' + p + ')'
+      }).join(', ') + chunks[node.range[1] + 1]
     }
 
     function getModuleName(path) {
@@ -157,14 +156,7 @@ module.exports = function (file, options) {
       if (idx === -1) return null
       return path.substring(idx)
     }
-    return chunks.reduce(function(a, b) {
-      if(Array.isArray(a)){
-        a = a.join("\n")
-      }
-      if(Array.isArray(b)){
-        b = b.join("\n")
-      }
-      return a + b
-    });
+
+    return chunks.join('');
   }
 };
