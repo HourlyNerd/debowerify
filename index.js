@@ -142,9 +142,11 @@ module.exports = function (file, options) {
       for (var i = node.range[0] + 1; i < node.range[1]; i++) {
         chunks[i] = '';
       }
-      chunks[node.range[1] + 1] = paths.map(function (p, i) {
-        return (i == 0 ? '\n': '')+'require(' + p + ')'
-      }).join(', ') + chunks[node.range[1] + 1]
+      if(paths.length) {
+        chunks[node.range[1] + 1] = paths.map(function (p, i) {
+          return (i == 0 ? '\n' : '') + 'require(' + p + ')'
+        }).join(', ') + chunks[node.range[1] + 1];
+      }
     }
 
     function getModuleName(path) {
