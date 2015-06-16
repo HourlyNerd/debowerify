@@ -115,7 +115,7 @@ module.exports = function (file, options) {
         var pkg = (bowerModules.pkgMeta.overrides[moduleName] || {}).main || pkgMeta.main;
         if (pkgMeta && pkg) {
           pkg = pkg[process.env.NODE_ENV] || pkg;
-          requiredFilePaths = Array.isArray(pkg) ? pkg.filter(function (file) { return /\.(js|coffee)$/.test(file); }) : [ pkg ];
+          requiredFilePaths = Array.isArray(pkg) ? pkg.filter(function (file) { return /\.(js|coffee|css|scss)$/.test(file); }) : [ pkg ];
         } else {
           // if 'main' wasn't specified by this component, let's try
           // guessing that the main file is moduleName.js
@@ -133,8 +133,10 @@ module.exports = function (file, options) {
         relativeRequiredFilePaths.push(JSON.stringify(relativeRequiredFilePath))
       })
 
-      replaceNode(node.arguments[0], relativeRequiredFilePaths);
-
+      if(relativeRequiredFilePaths.length){
+        replaceNode(node.arguments[0], relativeRequiredFilePaths);
+      }
+      
     }});
 
     function replaceNode(node, paths) {
